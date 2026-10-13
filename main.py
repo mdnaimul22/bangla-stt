@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 import uvicorn
 
-from src.config import Settings, setup_logger, shutdown_logger
+from src.config import Settings, get_abs_path, setup_logger, shutdown_logger
 from src.helpers import (
     kill_pid,
     register_cors,
@@ -47,18 +49,14 @@ register_cors(app, Settings)
 register_middleware(app, logger, Settings)
 register_error_handlers(app, logger)
 
+app.mount("/static", StaticFiles(directory=get_abs_path("static")), name="static")
+
 app.include_router(transcription_router)
 
 
-@app.get("/", tags=["System"])
+@app.get("/", tags=["UI"])
 async def root():
-    return {
-        "status": "ok",
-        "project": Settings.PROJECT_NAME,
-        "environment": Settings.ENV,
-        "version": Settings.VERSION,
-        "endpoint": "/v1/audio/transcriptions",
-    }
+    return FileResponse(get_abs_path("static/index.html"))
 
 
 @app.get("/health", response_model=HealthResponse, tags=["System"])

@@ -22,6 +22,14 @@ def create_dummy_wav_bytes(duration_sec: float = 0.5) -> bytes:
 
 
 @pytest.mark.asyncio
+async def test_root_ui(client: AsyncClient):
+    response = await client.get("/")
+    assert response.status_code == 200
+    assert "Whisper STT" in response.text
+    assert "micBtn" in response.text
+
+
+@pytest.mark.asyncio
 async def test_health_check(client: AsyncClient):
     response = await client.get("/health")
     assert response.status_code == 200
