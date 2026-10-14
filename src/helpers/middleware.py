@@ -45,7 +45,7 @@ def register_middleware(app, logger, settings) -> None:
         # ── 3. Structured request log ───────────────────────────────────────
         logger.info(
             f"[{request_id}] {request.method} {request.url.path} "
-            f"→ {response.status_code} ({latency_ms:.1f}ms)"
+            f"-> {response.status_code} ({latency_ms:.1f}ms)"
         )
 
         # ── 4. Inject Request-ID header ─────────────────────────────────────
