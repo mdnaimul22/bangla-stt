@@ -1,111 +1,102 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Whisper STT - বাংলা ভয়েস ট্রান্সক্রিপশন</title>
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Whisper STT</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
   <div class="ambient-glow"></div>
 
-  <main class="app-container">
-    <header class="app-header">
-      <div class="brand">
-        <div class="brand-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-            <line x1="12" y1="19" x2="12" y2="22"/>
+  <main class="mobile-app">
+    <!-- Top: Transcription Output Area -->
+    <section class="output-section">
+      <div class="output-topbar">
+        <div class="app-title">
+          <svg class="sparkle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+            <line x1="12" y1="19" x2="12" y2="22" />
           </svg>
+          <span>ট্রান্সক্রিপশন আউটপুট</span>
         </div>
-        <div>
-          <h1>Whisper STT</h1>
-          <p class="subtitle">বাংলা স্পিচ-টু-টেক্সট ট্রান্সক্রিপশন সার্ভিস</p>
-        </div>
+        <button type="button" class="btn-copy" id="copyBtn" title="কপি করুন">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          <span id="copyBtnText">কপি</span>
+        </button>
       </div>
-      <div class="server-status" id="serverStatusBadge">
-        <span class="status-dot"></span>
-        <span id="serverStatusText">কানেক্টিং...</span>
-      </div>
-    </header>
 
-    <section class="card config-card">
-      <div class="config-grid">
-        <div class="field-group">
-          <label for="apiKeyInput">API Key</label>
-          <input type="password" id="apiKeyInput" placeholder="sk-whisper-bn-secret" autocomplete="off">
-        </div>
-        <div class="field-group">
-          <label for="modelSelect">মডেল</label>
-          <select id="modelSelect">
-            <option value="shhossain/whisper-base-bn" selected>shhossain/whisper-base-bn (বাংলা স্পেশাল)</option>
-            <option value="base">openai/whisper-base</option>
-            <option value="small">openai/whisper-small</option>
-            <option value="tiny">openai/whisper-tiny</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label for="languageSelect">ভাষা</label>
-          <select id="languageSelect">
-            <option value="bn" selected>বাংলা (bn)</option>
-            <option value="en">English (en)</option>
-            <option value="auto">স্বয়ংক্রিয় সনাক্তকরণ (auto)</option>
-          </select>
-        </div>
-        <div class="field-group toggle-group">
-          <label for="noiseToggle">নয়েজ রিডাকশন</label>
-          <label class="switch">
-            <input type="checkbox" id="noiseToggle" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
+      <div class="result-scrollbox">
+        <div class="result-body" id="resultText">এখানে আপনার বলা কথাগুলোর বাংলা রূপান্তর আসবে...</div>
+      </div>
+
+      <div class="result-meta hidden" id="resultMeta">
+        <span class="meta-chip" id="metaLang">bn</span>
+        <span class="meta-chip" id="metaModel">bitwisemind</span>
+        <span class="meta-chip" id="metaNoise">Noise: ON</span>
+        <span class="meta-chip" id="metaDuration">0.0s</span>
       </div>
     </section>
 
-    <section class="card recorder-card">
-      <div class="visualizer-wrapper">
-        <canvas id="waveformCanvas" width="600" height="90"></canvas>
+    <!-- Middle: Mouth / Microphone & Action Controls -->
+    <section class="mouth-section">
+      <div class="visualizer-box">
+        <canvas id="waveformCanvas" width="360" height="46"></canvas>
       </div>
 
-      <div class="timer-display" id="timerDisplay">00:00</div>
-      <div class="status-hint" id="statusHint">রেকর্ড করতে মাউথ অডিও বাটনে ক্লিক করুন</div>
+      <div class="timer-row">
+        <span class="timer-val" id="timerDisplay">00:00</span>
+        <span class="status-msg" id="statusHint">রেকর্ড করতে মাউথ বাটনে ট্যাপ করুন</span>
+      </div>
 
-      <div class="record-controls">
-        <button type="button" class="mic-button" id="micBtn" title="রেকর্ড শুরু / বন্ধ করুন">
-          <div class="mic-ripple"></div>
-          <div class="mic-core">
-            <svg class="mic-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-              <line x1="12" y1="19" x2="12" y2="22"/>
+      <!-- Mouth / Mic Big Button -->
+      <div class="mic-container">
+        <button type="button" class="mouth-btn" id="micBtn" title="রেকর্ড শুরু / বন্ধ করুন">
+          <div class="pulse-ring"></div>
+          <div class="mouth-core">
+            <svg class="mic-icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+              <line x1="12" y1="19" x2="12" y2="22" />
             </svg>
             <svg class="stop-icon hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="5" y="5" width="14" height="14" rx="2"/>
+              <rect x="5" y="5" width="14" height="14" rx="2" />
             </svg>
           </div>
         </button>
       </div>
 
+      <!-- Playback & Action Controls (Send / Discard) -->
       <div class="playback-zone hidden" id="playbackZone">
         <audio id="audioPlayer" controls></audio>
-        <div class="action-buttons">
-          <button type="button" class="btn btn-secondary" id="discardBtn">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M3 6h18"/>
-              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
-              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+        <div class="action-btn-row">
+          <button type="button" class="btn-sm btn-discard" id="discardBtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18" />
+              <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+              <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
             </svg>
-            মুছে ফেলুন
+            মুছুন
           </button>
-          <button type="button" class="btn btn-primary" id="sendBtn">
+          <button type="button" class="btn-sm btn-send" id="sendBtn">
             <span class="btn-text">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
               </svg>
               সেন্ড করুন
             </span>
@@ -115,38 +106,46 @@
       </div>
     </section>
 
-    <section class="card result-card" id="resultCard">
-      <div class="result-header">
-        <div class="result-title">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
-          </svg>
-          <h2>ট্রান্সক্রিপশন আউটপুট</h2>
+    <!-- Bottom: Compact Functionalities / Settings -->
+    <footer class="bottom-controls">
+      <div class="ctrl-chip-row">
+        <div class="mini-field flex-grow">
+          <label for="modelSelect">মডেল</label>
+          <select id="modelSelect" class="mini-select">
+            <option value="bitwisemind/sam_15000_clean_text_full_model" selected>bitwisemind/sam_15000</option>
+            <option value="shhossain/whisper-base-bn">shhossain/whisper-base-bn</option>
+            <option value="base">openai/whisper-base</option>
+            <option value="small">openai/whisper-small</option>
+            <option value="tiny">openai/whisper-tiny</option>
+          </select>
         </div>
-        <button type="button" class="btn-copy" id="copyBtn" title="কপি করুন">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
-          <span id="copyBtnText">কপি</span>
-        </button>
-      </div>
 
-      <div class="result-body" id="resultText">এখানে আপনার বলা কথাগুলোর বাংলা ট্রান্সক্রিপশন প্রদর্শিত হবে...</div>
+        <div class="mini-field">
+          <label for="noiseToggle">নয়েজ</label>
+          <label class="mini-switch">
+            <input type="checkbox" id="noiseToggle" checked>
+            <span class="mini-slider"></span>
+          </label>
+        </div>
 
-      <div class="result-meta hidden" id="resultMeta">
-        <span class="badge" id="metaLang">ভাষা: bn</span>
-        <span class="badge" id="metaModel">মডেল: shhossain/whisper-base-bn</span>
-        <span class="badge" id="metaNoise">নয়েজ রিডাকশন: চালু</span>
-        <span class="badge" id="metaDuration">সময়: 0.0s</span>
+        <div class="mini-field">
+          <label for="languageSelect">ভাষা</label>
+          <select id="languageSelect" class="mini-select mini-select-sm">
+            <option value="bn" selected>bn</option>
+            <option value="en">en</option>
+            <option value="auto">auto</option>
+          </select>
+        </div>
+
+        <div class="mini-field">
+          <label for="apiKeyInput">Key</label>
+          <input type="password" id="apiKeyInput" class="mini-input" placeholder="Key" autocomplete="off">
+        </div>
       </div>
-    </section>
+    </footer>
   </main>
 
   <script src="/static/js/app.js"></script>
 </body>
+
 </html>

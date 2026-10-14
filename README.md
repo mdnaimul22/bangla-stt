@@ -8,7 +8,7 @@ Standalone, high-performance Speech-to-Text API service built with FastAPI, PyTo
 
 - **OpenAI-Compatible Endpoint**: `POST /v1/audio/transcriptions` supporting standard `multipart/form-data` audio file uploads (`file`, `model`, `language`, `noise_reduction`).
 - **Base64 JSON Endpoint**: `POST /v1/audio/transcriptions/json` for microservices sending base64-encoded audio.
-- **Native Bengali Model**: Preloaded with `shhossain/whisper-base-bn` for high-accuracy Bengali speech recognition.
+- **Native Bengali Model**: Preloaded with `bitwisemind/sam_15000_clean_text_full_model` for high-accuracy Bengali speech recognition.
 - **Spectral Noise Reduction**: Integrated `noisereduce` spectral gating toggle (`prop_decrease=0.75`) to suppress background noise.
 - **Multi-Format Audio**: Decodes WebM (Opus), WAV, MP3, M4A, OGG, FLAC via high-speed ffmpeg pipeline.
 - **Bearer Token Security**: Constant-time `hmac.compare_digest` authentication header validation.
@@ -41,14 +41,17 @@ APP_ENV=development
 LOG_DIR=logs
 DATA_DIR=data
 
-API_HOST=0.0.0.0
-API_PORT=8020
+API_HOST=127.0.0.1
+API_PORT=8030
 
 API_KEY=sk-whisper-bn-secret
 
 DEFAULT_MODEL=shhossain/whisper-base-bn
 DEFAULT_LANGUAGE=bn
 NOISE_REDUCTION_DEFAULT=true
+
+ENABLE_TAILSCALE=false
+TAILSCALE_FUNNEL_PORT=10000
 ```
 
 ---
@@ -102,13 +105,4 @@ curl -X POST http://127.0.0.1:8020/v1/audio/transcriptions/json \
     "language": "bn",
     "noise_reduction": true
   }'
-```
-
----
-
-## Running Automated Tests
-
-```bash
-cd /home/naimul/whisper-service
-./.venv/bin/python -m pytest tests/test_transcription.py -v
 ```

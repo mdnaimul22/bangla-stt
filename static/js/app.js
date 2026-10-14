@@ -56,6 +56,7 @@
   }
 
   async function checkServerHealth() {
+    if (!serverStatusBadge || !serverStatusText) return;
     try {
       const res = await fetch("/health");
       if (res.ok) {
@@ -224,7 +225,7 @@
     audioPlayer.src = "";
     playbackZone.classList.add("hidden");
     timerDisplay.textContent = "00:00";
-    statusHint.textContent = "রেকর্ড করতে মাউথ অডিও বাটনে ক্লিক করুন";
+    statusHint.textContent = "রেকর্ড করতে মাউথ বাটনে ট্যাপ করুন";
     drawEmptyWaveform();
   }
 
@@ -263,20 +264,20 @@
         try {
           const errData = await res.json();
           errDetail = errData.detail || errDetail;
-        } catch {}
+        } catch { }
         throw new Error(errDetail);
       }
 
       const data = await res.json();
       resultText.textContent = data.text || "(কোন কথা সনাক্ত করা যায়নি)";
 
-      metaLang.textContent = `ভাষা: ${data.language || language}`;
-      metaModel.textContent = `মডেল: ${data.model || model}`;
-      metaNoise.textContent = `নয়েজ রিডাকশন: ${data.noise_reduction ? "চালু" : "বন্ধ"}`;
-      metaDuration.textContent = `সময়: ${data.duration_seconds || 0}s`;
+      metaLang.textContent = data.language || language;
+      metaModel.textContent = (data.model || model).split("/").pop() || model;
+      metaNoise.textContent = data.noise_reduction ? "Noise: ON" : "Noise: OFF";
+      metaDuration.textContent = `${data.duration_seconds || 0}s`;
       resultMeta.classList.remove("hidden");
 
-      statusHint.textContent = "ট্রান্সক্রিপশন সফলভাবে সম্পন্ন হয়েছে!";
+      statusHint.textContent = "ট্রান্সক্রিপশন সম্পন্ন হয়েছে!";
     } catch (err) {
       resultText.textContent = "ত্রুটি: " + err.message;
       statusHint.textContent = "রিকোয়েস্ট ব্যর্থ হয়েছে: " + err.message;

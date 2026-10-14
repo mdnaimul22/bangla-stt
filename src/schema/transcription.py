@@ -23,3 +23,4 @@ class HealthResponse(BaseModel):
     version: str
     loaded_model: str | None = None
     device: str
+    public_url: str | None = None

@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     DEFAULT_LANGUAGE: str = Field(default="bn", validation_alias="DEFAULT_LANGUAGE")
     NOISE_REDUCTION_DEFAULT: bool = Field(default=True, validation_alias="NOISE_REDUCTION_DEFAULT")
 
+    PUBLIC_URL: str = Field(default="", validation_alias="PUBLIC_URL")
+    TAILSCALE_FUNNEL_PORT: int = Field(default=10000, validation_alias="TAILSCALE_FUNNEL_PORT")
+    ENABLE_TAILSCALE: bool = Field(default=False, validation_alias="ENABLE_TAILSCALE")
+
     def _resolve(self, val: str) -> Path:
         val = val.strip()
         if val.startswith("/."):

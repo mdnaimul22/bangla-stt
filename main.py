@@ -11,6 +11,7 @@ from src.helpers import (
     register_cors,
     register_error_handlers,
     register_middleware,
+    setup_tailscale_ingress,
 )
 from src.routers import transcription_router
 from src.schema.transcription import HealthResponse
@@ -30,6 +31,13 @@ async def lifespan(app: FastAPI):
         logger.info(f"Preloaded default model: {Settings.DEFAULT_MODEL}")
     except Exception as e:
         logger.error(f"Failed to preload model {Settings.DEFAULT_MODEL}: {e}")
+
+    if Settings.ENABLE_TAILSCALE:
+        try:
+            ingress_url = await setup_tailscale_ingress(Settings.API_PORT)
+            logger.info(f"Tailscale Ingress ready: {ingress_url}")
+        except Exception as e:
+            logger.warning(f"Tailscale Ingress skipped: {e}")
 
     yield
 
@@ -68,6 +76,7 @@ async def health_check() -> HealthResponse:
         version=Settings.VERSION,
         loaded_model=transcriber_service.loaded_model_name,
         device=transcriber_service.device_name,
+        public_url=Settings.PUBLIC_URL or None,
     )
 
 

@@ -17,7 +17,13 @@ from .middleware import register_middleware
 from .nginx import generate_nginx_config
 from .port_utils import get_pid, is_port_free, kill_pid
 from .rate_limit import RateLimiter
-
+from .tailscale import (
+    is_tailscale_installed,
+    setup_tailscale_ingress,
+    reset_tailscale_serve,
+    get_tailscale_status,
+    get_tailscale_guidance,
+)
 __all__ = [
     "AppError",
     "NotFoundError",
@@ -44,4 +50,9 @@ __all__ = [
     "decode_audio_bytes",
     "apply_noise_reduction",
     "save_pcm_wav",
+    "is_tailscale_installed",
+    "setup_tailscale_ingress",
+    "reset_tailscale_serve",
+    "get_tailscale_status",
+    "get_tailscale_guidance",
 ]
