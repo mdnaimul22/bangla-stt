@@ -79,7 +79,7 @@ async def health_check() -> HealthResponse:
         public_url=Settings.PUBLIC_URL or None,
     )
 
-
+ 
 if __name__ == "__main__":
     host = Settings.API_HOST
     api_port = Settings.API_PORT
@@ -91,5 +91,5 @@ if __name__ == "__main__":
         "main:app",
         host=host,
         port=api_port,
-        reload=False,
+        reload=True,
     )

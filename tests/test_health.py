@@ -19,7 +19,6 @@ async def test_health_check(client: AsyncClient):
 @pytest.mark.asyncio
 async def test_root_endpoint(client: AsyncClient):
     response = await client.get("/")
-    assert response.status_code in (200, 307)
-    if response.status_code == 200:
-        data = response.json()
-        assert data.get("status") == "ok"
+    assert response.status_code == 200
+    assert "text/html" in response.headers.get("content-type", "")
+    assert "Whisper STT" in response.text

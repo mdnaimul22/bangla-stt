@@ -1,10 +1,9 @@
 ---
 trigger: always_on
-name: project-tree-example
 description: follow similar kind of Project Structure or more schema base Architectural Pattern that track code structure without viewing the full context of code.
 ---
 
-### Canonical Project Structure Example-1
+## Canonical Project Structure Example-1
 
 ```
 project_root/
@@ -18,7 +17,7 @@ project_root/
 │   │   ├── dotenv.py                 # load/set/get/remove .env values
 │   │   └── settings.py               # BaseProjectSettings — API keys, timeouts, limits
 │   │
-│   ├── schema/                       # 📐 LAYER 1 — Data Contracts (পরম সত্য)
+│   ├── schema/                       # 📐 LAYER 1 — Data Contracts (Single Source of Truth)
 │   │   ├── __init__.py
 │   │   ├── profile.py                # LinkedInProfile, ConnectionRequest
 │   │   ├── message.py                # Message, MessageThread
@@ -26,14 +25,14 @@ project_root/
 │   │
 │   ├── api/                          # 🚪 LAYER 1 — HTTP Interface
 │   │   ├── __init__.py
-│   │   ├── routes.py                 # app.js এখানে fetch() করে
+│   │   ├── routes.py                 # Endpoints consumed by frontend (e.g. app.js fetch)
 │   │   └── helpers/                  # 🔐 Private — api/ internal only
 │   │       └── request_validator.py
 │   │
 │   ├── providers/                    # 🔌 LAYER 1 — AI / External API integrations
 │   │   ├── __init__.py
 │   │   ├── openai.py                 # AI provider
-│   │   └── helpers/                  # 🔐 Private — শুধু providers/ ব্যবহার করবে
+│   │   └── helpers/                  # 🔐 Private — consumed only by providers/
 │   │       └── session_guard.py
 │   │
 │   ├── services/                     # 🧠 LAYER 1 — Business Logic
@@ -41,7 +40,7 @@ project_root/
 │   │   ├── profile.py                # Profile scraping & analysis
 │   │   ├── outreach.py               # Connection & message automation
 │   │   ├── job.py                    # Job search & apply
-│   │   └── helpers/                  # 🔐 Private — শুধু services/ ব্যবহার করবে
+│   │   └── helpers/                  # 🔐 Private — consumed only by services/
 │   │       └── message_builder.py
 │   │
 │   ├── browser/                      # 🧠 LAYER 1
@@ -63,28 +62,28 @@ project_root/
 │   │    ├── helpers/                 # 🔐 Private
 │   │    └── search.py
 │   │
-│   └── helpers/                      # 🌐 GLOBAL Helpers — সবাই ব্যবহার করতে পারে
+│   └── helpers/                      # 🌐 GLOBAL Helpers — accessible project-wide
 │       ├── logger.py
 │       └── exceptions.py
 │       └── date_utils.py
 │
-├── web/                              # 🖥️ Frontend (সম্পূর্ণ আলাদা জগৎ)
-│   ├── app.js                        # fetch(`${API_BASE}/profiles`) করে
+├── web/                              # 🖥️ Frontend (completely decoupled interface)
+│   ├── app.js                        # Frontend logic (fetches ${API_BASE}/profiles)
 │   ├── index.html
 │   └── style.css
 │
 ├── docs/
 │
-├── tests/                            # src/ এর mirror
+├── tests/                            # Mirrors src/ hierarchy
 │   ├── test_services/
 │   └── test_api/
 │
-├── .env                              # Config যদি একটি Gear Box হয় তাহলে এই .env Secrets হচ্ছে ড্রাইভার, যে কনফিগ কে ম্যানুপুলেট করতে পারে।
+├── .env                              # Environment driver (manipulates config/settings.py)
 ├── main.py                           # Entry point
 └── pyproject.toml
 ```
 
-### Canonical Project Structure Example-2
+## Canonical Project Structure Example-2
 
 ```
 project_root/
@@ -111,7 +110,7 @@ project_root/
 └── profiles_data/           # Saved backup JSON files
 ```
 
-### Canonical Project Structure Example-2.1 with local import relations
+## Canonical Project Structure Example-2.1 with local import relations
 
 ```
 epic-adb/
@@ -163,7 +162,7 @@ epic-adb/
 ├── /README.md
 └── /tree.py
 ```
-### Canonical Project Structure Example-3
+## Canonical Project Structure Example-3
 
 ```
 ClassLens/
@@ -183,7 +182,7 @@ ClassLens/
 │   │   ├── dotenv.py
 │   │   └── settings.py              # EduWatchSettings extends BaseProjectSettings
 │   │
-│   ├── schema/                      # 📐 Data Contracts — পরম সত্য
+│   ├── schema/                      # 📐 Data Contracts — Single Source of Truth
 │   │   ├── __init__.py
 │   │   ├── student.py               # Student, GuardianContact
 │   │   ├── detection.py             # DetectionResult, FaceMatch
@@ -217,7 +216,7 @@ ClassLens/
 │   │   │   ├── embedder.py          # ArcFaceEmbedder
 │   │   │   └── matcher.py           # VectorDBMatcher
 │   │   │
-│   │   ├── behavior/                # Phase 3 — Future modules এখানে আসবে
+│   │   ├── behavior/                # Phase 3 — Future extensible pipeline modules
 │   │   │   ├── __init__.py
 │   │   │   ├── head_pose.py         # HeadPoseAnalyzer
 │   │   │   ├── drowsiness.py        # DrowsinessDetector

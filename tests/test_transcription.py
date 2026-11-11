@@ -55,6 +55,15 @@ async def test_transcribe_unauthorized(client: AsyncClient):
     )
     assert response_bad_key.status_code == 401
 
+    res_status_unauth = await client.get("/v1/audio/status")
+    assert res_status_unauth.status_code == 401
+
+    res_status_auth = await client.get(
+        "/v1/audio/status",
+        headers={"Authorization": f"Bearer {TEST_API_KEY}"},
+    )
+    assert res_status_auth.status_code == 200
+
 
 @pytest.mark.asyncio
 async def test_transcribe_empty_file(client: AsyncClient):

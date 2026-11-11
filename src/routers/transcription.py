@@ -91,7 +91,11 @@ async def transcribe_audio_json(
         )
 
 
-@router.get("/status", tags=["Audio Transcription"])
+@router.get(
+    "/status",
+    tags=["Audio Transcription"],
+    dependencies=[Depends(verify_api_key)],
+)
 async def get_transcription_status() -> dict[str, str | None]:
     return {
         "status": "ready",

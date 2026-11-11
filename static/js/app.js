@@ -45,11 +45,10 @@
   let recordingSeconds = 0;
 
   const SAVED_KEY = "whisper_stt_api_key";
-  const DEFAULT_KEY = "8801758838322";
 
   function initApiKey() {
     const saved = localStorage.getItem(SAVED_KEY);
-    apiKeyInput.value = saved || DEFAULT_KEY;
+    apiKeyInput.value = saved || "";
     apiKeyInput.addEventListener("input", () => {
       localStorage.setItem(SAVED_KEY, apiKeyInput.value.trim());
     });
@@ -233,6 +232,14 @@
     if (!audioBlob) return;
 
     const apiKey = (apiKeyInput.value || "").trim();
+    if (!apiKey) {
+      resultText.textContent = "ত্রুটি: API Key প্রদান করা হয়নি! অনুগ্রহ করে নিচে 'Key' বক্সে আপনার সঠিক API Key প্রবেশ করান।";
+      statusHint.textContent = "API Key ব্যতিত রিকোয়েস্ট পাঠানো সম্ভব নয়";
+      resultMeta.classList.add("hidden");
+      apiKeyInput.focus();
+      return;
+    }
+
     const model = modelSelect.value;
     const language = languageSelect.value;
     const noiseReduction = noiseToggle.checked ? "true" : "false";
@@ -265,6 +272,9 @@
           const errData = await res.json();
           errDetail = errData.detail || errDetail;
         } catch { }
+        if (res.status === 401) {
+          errDetail = "অননুমোদিত (Unauthorized): প্রদানকৃত API Key টি সঠিক নয়!";
+        }
         throw new Error(errDetail);
       }
 
